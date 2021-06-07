@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import loader
 from django.urls import reverse
-
+from polls.serializers.question import QuestionSerializer
 from polls.models import Question, Choice
 
 
@@ -43,3 +43,9 @@ def vote(request, question_id):
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
 
+def questionAPI(request):
+    latest_question_list = Question.objects.order_by('-pub_date')[:5]
+    data = {"result": list(latest_question_list.values( "question_test", "pub_date" ))
+            }
+
+    return JsonResponse( data, safe=False)
